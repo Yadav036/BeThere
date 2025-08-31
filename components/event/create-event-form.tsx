@@ -87,7 +87,7 @@ export default function CreateEventForm({ onCreated }: { onCreated?: (event: any
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 mb-6 shadow-xl">
               <div className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-sm"></div>
             </div>
-            <h1 className="text-3xl font-bold text-white tracking-tight mb-2">SnapEvents</h1>
+            <h1 className="text-3xl font-bold text-white tracking-tight mb-2">BeThere</h1>
             <p className="text-gray-400 text-sm">Create a new event</p>
           </div>
 
