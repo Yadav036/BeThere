@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { InviteList } from "@/components/invites/invite-list"
 
+import { jwtDecode } from "jwt-decode"
 
 
 export default function HomePage() {
@@ -17,7 +18,7 @@ export default function HomePage() {
       router.replace("/login")
     } else {
       try {
-        const decoded: any = jwt_decode(token)
+        const decoded: any = jwtDecode(token)
         setUsername(decoded.username || decoded.email || decoded.name || null)
       } catch {
         setUsername(null)
