@@ -14,7 +14,6 @@ export default function HomePage() {
   const [username, setUsername] = React.useState<string | null>(null)
 
   React.useEffect(() => {
-    // redirect unauthenticated users to login
     const token = typeof window !== "undefined" ? localStorage.getItem("token") : null
     if (!token) {
       router.replace("/login")
@@ -28,8 +27,7 @@ export default function HomePage() {
     }
   }, [router])
 
-
- return (
+  return (
     <main className="mx-auto grid max-w-3xl gap-6 p-4">
       <header className="flex items-center justify-between rounded-xl border-4 border-black bg-yellow-400 px-4 py-3 text-black">
         <h1 className="text-balance text-3xl font-extrabold">Snap Events</h1>
@@ -44,18 +42,21 @@ export default function HomePage() {
               window.location.href = "/login"
             }}
             className="border-2 border-black"
-       
+          >
+            Logout
+          </Button>
+        </div>
       </header>
 
       <CreateEventForm />
-
       <UserSearchInvite />
-
       <InviteList />
 
       <section className="rounded-xl border-4 border-black p-4">
         <h2 className="mb-2 text-2xl font-bold">Your Events</h2>
-        <p className="text-sm text-muted-foreground">After creating an event, you’ll see it here.</p>
+        <p className="text-sm text-muted-foreground">
+          After creating an event, you’ll see it here.
+        </p>
       </section>
     </main>
   )
