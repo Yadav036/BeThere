@@ -28,6 +28,7 @@ export default function HomePage() {
   }, [router])
 
   return (
+    <div>
     <main className="mx-auto grid max-w-3xl gap-6 p-4">
       <header className="flex items-center justify-between rounded-xl border-4 border-black bg-yellow-400 px-4 py-3 text-black">
         <h1 className="text-balance text-3xl font-extrabold">Snap Events</h1>
@@ -59,5 +60,6 @@ export default function HomePage() {
         </p>
       </section>
     </main>
+    </div>
   )
 }
