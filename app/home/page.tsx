@@ -48,8 +48,6 @@ export default function HomePage() {
         </div>
       </header>
 
-      <CreateEventForm />
-      <UserSearchInvite />
       <InviteList />
 
       <section className="rounded-xl border-4 border-black p-4">
