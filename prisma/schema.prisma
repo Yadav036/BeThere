@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  username     String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  createdEvents Event[]        @relation("UserCreatedEvents")
+  participants  EventParticipant[]
+  invites       EventInvite[]  @relation("UserInvites")
+}
+
+model Event {
+  id            String   @id @default(uuid())
+  name          String
+  creatorId     String
+  creator       User     @relation("UserCreatedEvents", fields: [creatorId], references: [id])
+  eventTime     DateTime
+  locationName  String
+  locationLat   Float
+  locationLng   Float
+  shareLocation Boolean  @default(true)
+  createdAt     DateTime @default(now())
+
+  participants EventParticipant[]
+  invites      EventInvite[]
+}
+
+model EventParticipant {
+  id              String   @id @default(uuid())
+  eventId         String
+  userId          String
+  event           Event    @relation(fields: [eventId], references: [id])
+  user            User     @relation(fields: [userId], references: [id])
+  socketId        String?
+  lastLat         Float?
+  lastLng         Float?
+  lastLocationAt  DateTime?
+  joinedAt        DateTime @default(now())
+
+  @@unique([eventId, userId])
+}
+
+model EventInvite {
+  id             String   @id @default(uuid())
+  eventId        String
+  invitedUserId  String?
+  invitedEmail   String?
+  status         String   @default("pending") // pending, accepted, declined
+  role           String   @default("guest")   // host, guest
+  createdAt      DateTime @default(now())
+
+  event          Event    @relation(fields: [eventId], references: [id])
+  invitedUser    User?    @relation("UserInvites", fields: [invitedUserId], references: [id])
+
+  @@index([eventId])
+  @@index([invitedUserId])
+  @@index([invitedEmail])
+}
