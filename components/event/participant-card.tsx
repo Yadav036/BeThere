@@ -3,7 +3,7 @@
 import Avatar, { genConfig } from "react-nice-avatar"
 
 function metersToKm(m: number | null | undefined) {
-  if (m == null) return "-"   // covers null and undefined
+  if (m == null) return "-"
   return (m / 1000).toFixed(1) + " km"
 }
 
@@ -12,21 +12,28 @@ function secondsToMin(s: number | null | undefined) {
   return Math.round(s / 60) + " min"
 }
 
-
 // Helper: check travelling status
 function isTravelling(
   lastLocation?: { lat: number; lng: number; ts: number },
   prevLocation?: { lat: number; lng: number; ts: number }
 ) {
   if (!lastLocation || !prevLocation) return false
-  const oneMinAgo = Date.now() - 60 * 1000
-  if (lastLocation.ts < oneMinAgo) return false
+  
+  // Check if location is recent (within 2 minutes)
+  const twoMinAgo = Date.now() - 2 * 60 * 1000
+  if (lastLocation.ts < twoMinAgo) return false
 
-  const moved =
-    lastLocation.lat !== prevLocation.lat ||
-    lastLocation.lng !== prevLocation.lng
+  // Calculate distance moved using simple distance formula
+  const latDiff = Math.abs(lastLocation.lat - prevLocation.lat)
+  const lngDiff = Math.abs(lastLocation.lng - prevLocation.lng)
+  
+  // Convert to approximate meters (rough calculation)
+  const latMeters = latDiff * 111000 // 1 degree lat ≈ 111km
+  const lngMeters = lngDiff * 111000 * Math.cos((lastLocation.lat * Math.PI) / 180)
+  const totalDistance = Math.sqrt(latMeters * latMeters + lngMeters * lngMeters)
 
-  return moved
+  // Consider travelling if moved more than 50 meters
+  return totalDistance > 50
 }
 
 // Avatar configurations for different users
@@ -118,16 +125,38 @@ export default function ParticipantCard({
 }) {
   const now = Date.now()
   const eventTs = new Date(eventTimeISO).getTime()
-  const willBeLate =
-    etaSeconds != null ? now + etaSeconds * 1000 > eventTs : false
+  const willBeLate = etaSeconds != null ? now + etaSeconds * 1000 > eventTs : false
+
+  // Debug logging
+  console.log("ParticipantCard Debug:", {
+    userId: user.id,
+    username: user.username,
+    etaSeconds,
+    distanceMeters,
+    eventTimeISO,
+    lastLocation,
+    prevLocation,
+    willBeLate,
+    travelling: isTravelling(lastLocation, prevLocation)
+  })
 
   // Use avatar config based on user ID hash for consistency
-  const avatarIndex =
-    user.id
-      .split("")
-      .reduce((acc, char) => acc + char.charCodeAt(0), 0) %
-    avatarConfigs.length
+  const avatarIndex = user.id
+    .split("")
+    .reduce((acc, char) => acc + char.charCodeAt(0), 0) % avatarConfigs.length
+  
   const avatarConfig = genConfig(avatarConfigs[avatarIndex])
+
+  // Convert timestamp for travelling check
+  const lastLocationWithTs = lastLocation ? {
+    ...lastLocation,
+    ts: typeof lastLocation.ts === 'string' ? new Date(lastLocation.ts).getTime() : lastLocation.ts
+  } : undefined
+
+  const prevLocationWithTs = prevLocation ? {
+    ...prevLocation,
+    ts: typeof prevLocation.ts === 'string' ? new Date(prevLocation.ts).getTime() : prevLocation.ts
+  } : undefined
 
   return (
     <div className="relative">
@@ -169,24 +198,33 @@ export default function ParticipantCard({
           </div>
 
           <div className="space-y-3">
-            {/* Travelling */}
+            {/* Travelling Status */}
             <div className="flex items-center justify-between">
               <span className="text-gray-400 text-sm">Travelling</span>
-              <span
-                className={`font-medium ${
-                  isTravelling(lastLocation, prevLocation)
-                    ? "text-green-300"
-                    : "text-red-300"
-                }`}
-              >
-                {isTravelling(lastLocation, prevLocation) ? "Yes" : "No"}
-              </span>
+              <div className="flex items-center gap-2">
+                <div
+                  className={`w-2 h-2 rounded-full ${
+                    isTravelling(lastLocationWithTs, prevLocationWithTs)
+                      ? "bg-green-400 animate-pulse"
+                      : "bg-gray-500"
+                  }`}
+                ></div>
+                <span
+                  className={`font-medium text-sm ${
+                    isTravelling(lastLocationWithTs, prevLocationWithTs)
+                      ? "text-green-300"
+                      : "text-gray-400"
+                  }`}
+                >
+                  {isTravelling(lastLocationWithTs, prevLocationWithTs) ? "Moving" : "Stationary"}
+                </span>
+              </div>
             </div>
 
             {/* ETA */}
             <div className="flex items-center justify-between">
-              <span className="text-gray-400 text-sm">Need to Travel for</span>
-              <span className="text-white font-medium">
+              <span className="text-gray-400 text-sm">ETA</span>
+              <span className={`font-medium ${willBeLate ? "text-red-300" : "text-white"}`}>
                 {secondsToMin(etaSeconds)}
               </span>
             </div>
@@ -199,8 +237,18 @@ export default function ParticipantCard({
               </span>
             </div>
 
-            {/* Status */}
-            <div className="flex items-center justify-between">
+            {/* Last Update */}
+            {lastLocation && (
+              <div className="flex items-center justify-between">
+                <span className="text-gray-400 text-sm">Last Update</span>
+                <span className="text-gray-300 text-sm">
+                  {getTimeAgo(lastLocationWithTs?.ts)}
+                </span>
+              </div>
+            )}
+
+            {/* Overall Status */}
+            <div className="flex items-center justify-between pt-2 border-t border-white/10">
               <span className="text-gray-400 text-sm">Status</span>
               <div className="flex items-center gap-2">
                 <div
@@ -209,13 +257,11 @@ export default function ParticipantCard({
                   }`}
                 ></div>
                 <span
-                  className={`font-medium ${
-                    willBeLate
-                      ? "text-red-300 line-through"
-                      : "text-green-300"
+                  className={`font-medium text-sm ${
+                    willBeLate ? "text-red-300" : "text-green-300"
                   }`}
                 >
-                  {willBeLate ? "Late" : "On time"}
+                  {willBeLate ? "Running Late" : "On Time"}
                 </span>
               </div>
             </div>
@@ -224,4 +270,22 @@ export default function ParticipantCard({
       </div>
     </div>
   )
+}
+
+// Helper function to show relative time
+function getTimeAgo(timestamp?: number): string {
+  if (!timestamp) return "-"
+  
+  const now = Date.now()
+  const diff = now - timestamp
+  const minutes = Math.floor(diff / (1000 * 60))
+  
+  if (minutes < 1) return "Just now"
+  if (minutes < 60) return `${minutes}m ago`
+  
+  const hours = Math.floor(minutes / 60)
+  if (hours < 24) return `${hours}h ago`
+  
+  const days = Math.floor(hours / 24)
+  return `${days}d ago`
 }
