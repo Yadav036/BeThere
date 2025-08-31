@@ -1,29 +1,38 @@
-# Snap Events
 
-Snap Events is a modern, real-time event coordination app built with Next.js, React, Prisma, and Tailwind CSS. It allows users to create events, invite friends, share live locations, and calculate ETAs to event destinations.
+# beThere
+
+**beThere** is a modern, real-time event coordination app that makes organizing and attending events with friends effortless. Built with **Next.js**, **React**, **Prisma**, and **Tailwind CSS**, it allows you to create events, invite friends, share live locations, and see ETAs to event destinations.
 
 ---
 
-## Features
+## What It Does
 
-- **User Authentication**: Sign up and log in securely using JWT-based authentication.
-- **Event Creation**: Create events with a name, time, and location (with optional location sharing).
-- **Invitations**: Search for users and invite them to your events.
-- **Live Location Reporting**: Participants can share their real-time location with the event.
-- **ETA Calculation**: Calculate estimated time of arrival to the event location using your current position.
-- **Responsive UI**: Beautiful, mobile-friendly interface styled with Tailwind CSS and shadcn/ui components.
+* **Secure Sign-In** – Log in or sign up using JWT-based authentication.
+* **Create Events** – Add events with a name, time, and location. You can optionally allow location sharing for attendees.
+* **Invite Friends** – Search for friends and invite them to your events.
+* **Live Location Sharing** – Participants can share their location in real time.
+* **ETA Tracking** – See estimated arrival times for everyone heading to the event.
+* **Mobile-Friendly Design** – Clean, responsive UI styled with Tailwind CSS and shadcn/ui components.
 
 ---
 
 ## Tech Stack
 
-- **Frontend**: [Next.js](https://nextjs.org/), [React](https://react.dev/), [TypeScript](https://www.typescriptlang.org/)
-- **Backend/API**: Next.js API routes
-- **Database**: [Prisma ORM](https://www.prisma.io/) (works with PostgreSQL, MySQL, SQLite, etc.)
-- **Authentication**: JWT (JSON Web Tokens)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/), [shadcn/ui](https://ui.shadcn.com/)
-- **Location**: Browser Geolocation API
-- **State Management**: React hooks
+* **Frontend:** Next.js, React, TypeScript
+* **Backend/API:** Next.js API routes
+* **Database:** Prisma ORM (PostgreSQL / MySQL / SQLite)
+* **Authentication:** JWT
+* **Styling:** Tailwind CSS, shadcn/ui
+* **Location & Maps:** Browser Geolocation API, optionally Google Maps API
+* **State Management:** React hooks
+
+---
+
+## How It Works (Briefly)
+
+* The **`useLocationReporter`** hook tracks the user’s location every few seconds and sends it to the backend.
+* The backend keeps the latest location for each participant.
+* ETA calculation is done by comparing the user’s current location with the event location, using a directions API if needed.
 
 ---
 
@@ -31,98 +40,64 @@ Snap Events is a modern, real-time event coordination app built with Next.js, Re
 
 ```
 /app
-  /api           # Next.js API routes (authentication, events, location updates)
-  /home          # Main user dashboard
-  /components    # Reusable UI and form components
-  /hooks         # Custom React hooks (e.g., useLocationReporter)
-  /lib           # Utility libraries (e.g., api fetch, JWT helpers, Prisma client)
-  /public        # Static assets
-  /styles        # Global styles (Tailwind config, etc.)
+  /api           # Backend routes (auth, events, locations)
+  /home          # Main dashboard
+  /components    # Reusable UI components
+  /hooks         # Custom hooks like useLocationReporter
+  /lib           # Utilities (API calls, JWT helpers, Prisma client)
+  /public        # Images and static assets
+  /styles        # Global styles and Tailwind config
 /prisma
-  schema.prisma  # Prisma schema
+  schema.prisma  # Prisma database schema
 ```
-
----
-
-## How Live Location & ETA Work
-
-- The `useLocationReporter` hook uses the browser's Geolocation API to fetch the user's current location every 10 seconds and POST it to the backend.
-- The backend stores the latest location for each participant.
-- ETA calculation can be performed by fetching the user's latest location and using a directions API (e.g., Google Maps Directions API) to compute travel time to the event location.
 
 ---
 
 ## Getting Started
 
-### 1. Clone the Repository
+1. **Clone the repo**
 
-```sh
-git clone https://github.com/yourusername/snap-events.git
-cd snap-events
+```bash
+git clone https://github.com/yadav036/bethere.git
+cd bethere
 ```
 
-### 2. Install Dependencies
+2. **Install dependencies**
 
-```sh
+```bash
 npm install
 ```
 
-### 3. Set Up Environment Variables
+3. **Set up environment variables**
 
-Create a `.env` file in the root directory and add your configuration:
+Create a `.env` file at the root:
 
 ```
 DATABASE_URL=your_database_url
 JWT_SECRET=your_jwt_secret
-NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_google_maps_api_key (if using maps)
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_maps_api_key
 ```
 
-### 4. Set Up the Database
+4. **Initialize the database**
 
-```sh
+```bash
 npx prisma migrate dev --name init
 ```
 
-### 5. Run the Development Server
+5. **Run the app locally**
 
-```sh
+```bash
 npm run dev
 ```
 
-Visit [http://localhost:3000](http://localhost:3000) to view the app.
+Visit [http://localhost:3000](http://localhost:3000) and start exploring!
 
 ---
 
-## Scripts
+## Useful Scripts
 
-- `npm run dev` - Start the development server
-- `npm run build` - Build for production
-- `npm run start` - Start the production server
-- `npx prisma studio` - Open Prisma Studio to view/edit the database
+* `npm run dev` – Start development server
+* `npm run build` – Build for production
+* `npm run start` – Start production server
+* `npx prisma studio` – View and edit your database in Prisma Studio
 
----
-
-## Cleaning Up
-
-If you see unused or duplicate folders in the project, you can safely remove them to keep the codebase clean. Only keep folders that are referenced in your imports or are part of the main app structure.
-
----
-
-## Contributing
-
-Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
-
----
-
-## License
-
-[MIT](LICENSE)
-
----
-
-## Acknowledgements
-
-- [Next.js](https://nextjs.org/)
-- [Prisma](https://www.prisma.io/)
-- [Tailwind CSS](https://tailwindcss.com/)
--
