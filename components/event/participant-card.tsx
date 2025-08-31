@@ -117,7 +117,7 @@ export default function ParticipantCard({
   prevLocation,
 }: {
   user: { id: string; username: string; email: string }
-  etaSeconds: number | null
+  etaSeconds: number 
   distanceMeters: number | null
   eventTimeISO: string
   lastLocation?: { lat: number; lng: number; ts: number }

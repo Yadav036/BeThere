@@ -4,10 +4,11 @@ import { getAuthFromHeader } from "@/lib/jwt"
 
 export async function GET(req: Request, { params }: { params: { id: string } }) {
   const auth = getAuthFromHeader(req)
+   const { id } = await params
   if (!auth) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   const participants = await prisma.eventParticipant.findMany({
-    where: { eventId: params.id },
+    where: { eventId: id },
     select: {
       id: true,
       user: { select: { id: true, username: true, email: true } },
