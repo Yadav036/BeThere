@@ -3,13 +3,15 @@
 import Avatar, { genConfig } from "react-nice-avatar"
 
 function metersToKm(m: number | null | undefined) {
-  if (!m && m !== 0) return "-"
+  if (m == null) return "-"   // covers null and undefined
   return (m / 1000).toFixed(1) + " km"
 }
+
 function secondsToMin(s: number | null | undefined) {
-  if (!s && s !== 0) return "-"
+  if (s == null) return "-"
   return Math.round(s / 60) + " min"
 }
+
 
 // Helper: check travelling status
 function isTravelling(
