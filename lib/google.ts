@@ -9,7 +9,7 @@ export async function placesAutocomplete(query: string) {
   url.searchParams.set("radius", "90000") // 50km radius
   url.searchParams.set("input", query)
   url.searchParams.set("key", GOOGLE_MAPS_API_KEY || "")
-  url.searchParams.set("types", "geocode")
+  url.searchParams.set("types", "establishment")
   const res = await fetch(url.toString())
   if (!res.ok) throw new Error("Autocomplete failed")
   return res.json()
