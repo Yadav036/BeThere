@@ -5,6 +5,7 @@ if (!GOOGLE_MAPS_API_KEY) {
 
 export async function placesAutocomplete(query: string) {
   const url = new URL("https://maps.googleapis.com/maps/api/place/autocomplete/json")
+  url.searchParams.set("location", "12.9716,77.5946")
   url.searchParams.set("radius", "90000") // 50km radius
   url.searchParams.set("input", query)
   url.searchParams.set("key", GOOGLE_MAPS_API_KEY || "")
