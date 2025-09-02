@@ -26,7 +26,7 @@ export default function CreateEventForm() {
   React.useEffect(() => {
     const t = setTimeout(async () => {
       try {
-        if (!query || selected && query === selected.description) return
+        if (!query || selected)return
         const res = await apiGet<{ predictions: Suggestion[] }>(
           `/api/places/autocomplete?input=${encodeURIComponent(query)}`,
         )
