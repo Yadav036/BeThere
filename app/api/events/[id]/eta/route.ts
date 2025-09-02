@@ -5,9 +5,11 @@ import { distanceMatrix } from "@/lib/google"
 
 export async function GET(req: Request, { params }: { params: { id: string } }) {
   const auth = getAuthFromHeader(req)
-  if (!auth) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-  const event = await prisma.event.findUnique({ where: { id: params.id } })
+  if (!auth) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  const eventId = params.id
+
+  const event = await prisma.event.findUnique({ where: { id: eventId } })
   if (!event) return NextResponse.json({ error: "Event not found" }, { status: 404 })
 
   const participants = await prisma.eventParticipant.findMany({

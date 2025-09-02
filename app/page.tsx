@@ -61,7 +61,7 @@ export default function HomePage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
-              <div className="w-6 h-6 rounded-lg bg-white/20 backdrop-blur-sm"></div>
+              <div className="w-6 h-12 rounded-lg bg-white/20 backdrop-blur-sm"></div>
             </div>
             <h1 className="text-4xl font-bold text-white tracking-tight">BeThere</h1>
           </div>
